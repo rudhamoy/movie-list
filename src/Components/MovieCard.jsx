@@ -1,9 +1,15 @@
 
-const MovieCard = ({onClick, data}) => {
- 
+const MovieCard = ({ onClick, data }) => {
+
   return (
-    <div onClick={onClick} className="bg-gray-100 rounded-md shadow-md shadow-slate-500 p-2 h-[18rem] w-[16rem] text-black">
-      <p>{data.Title}</p>
+    <div>
+      <div
+        onClick={onClick}
+        className="bg-gray-100 cursor-pointer rounded-md h-[18rem] w-[16rem] text-black overflow-hidden"
+      >
+        <img src={data.Poster} alt={data.Title} className="object-fill" />
+      </div>
+      <p className="my-1">{data.Title}</p>
     </div>
   )
 }
