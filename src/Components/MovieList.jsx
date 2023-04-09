@@ -1,6 +1,5 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import axios from "axios"
 
 import MovieCard from './MovieCard'
 import Modal from './Modal'
@@ -21,7 +20,7 @@ const MovieList = () => {
     const { showModal, setShowModal } = useStateContext()
 
     // custom hooks - useDebounce hooks for delay request to api when query type
-    const debounceTerms = useDebounce(searchTerm, 500)
+    const debounceTerms = useDebounce(searchTerm, 700)
 
     // custom hooks to close modal when click outside of box or background
     const ref = useOutsideClick(() => setShowModal(false))
@@ -66,12 +65,16 @@ const MovieList = () => {
 
     // onChange handler for search input
     const onChangeHandler = (e) => {
-        setMovies([])
         setError('')
         setSearchTerm(e.target.value)
+
         // set page to one when search query type
         // else the search results will show at current page number
         setPage(1)
+        setTimeout(() => {
+            setMovies([])
+          }, 550);
+       
     }
 
     // to show skeleton loading effect
@@ -101,7 +104,7 @@ const MovieList = () => {
             )}
 
             {/* list of movies */}
-            <div className='grid grid-cols-2 sm:grid-cols-4 gap-5 my-10'>
+            <div className='grid grid-cols-2 sm:grid-cols-4 gap-6 gap-y-8 my-10'>
                 {/* list of movies */}
                 {movies?.map(item => (
                     <MovieCard 

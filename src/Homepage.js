@@ -1,9 +1,15 @@
+import { useEffect } from 'react'
 import { RiMovie2Line } from 'react-icons/ri'
 import { BsFillArrowUpCircleFill } from 'react-icons/bs'
 import MovieList from './Components/MovieList'
 
 
 function Homepage() {
+    
+    useEffect(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    }, [])
+
     return (
         <div className='realtive'>
             <div className='p-5 flex place-items-center'>

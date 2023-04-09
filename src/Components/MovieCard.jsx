@@ -4,7 +4,7 @@ import axios from 'axios'
 
 const MovieCard = ({ data }) => {
 
-  const movieAPI = 'https://www.omdbapi.com/?apikey=14b23888&'
+  const movieAPI = process.env.REACT_APP_MOVIE_API
 
   const {  setShowModal, setMovieInfo, setMovieInfoLoading } = useStateContext()
 
@@ -29,7 +29,7 @@ const MovieCard = ({ data }) => {
       >
         <img src={data.Poster} alt={data.Title} className="object-fill" />
       </div>
-      <p className="my-1">{data.Title}</p>
+      <p className="my-1 text-sm">{data.Title}</p>
     </div>
   )
 }
