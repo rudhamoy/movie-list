@@ -5,6 +5,8 @@ import axios from 'axios'
 import MovieCard from './MovieCard'
 import Modal from './Modal'
 import { useDebounce } from '../hooks/useDebounce'
+import { useOutsideClick } from '../hooks/useOutsideClick'
+import SkletonLoader from './SkletonLoader'
 
 const MovieList = () => {
     const [showModal, setShowModal] = useState(false)
@@ -19,6 +21,8 @@ const MovieList = () => {
 
     // custom hooks - useDebounce hooks for delay request to api when query type
     let debounceTerms = useDebounce(searchTerm, 500)
+
+    const ref = useOutsideClick(() => setShowModal(false))
 
     const movieAPI = 'https://www.omdbapi.com/?apikey=14b23888&'
 
@@ -103,9 +107,14 @@ const MovieList = () => {
         setPage(1)
     }
 
+    let totalLoadingEffect = []
+    for(let i = 0; i < 10; i++) {
+        totalLoadingEffect.push(i)
+    }
+
     return (
         <>
-            <div className='flex justify-center my-5'>
+            <div className='flex justify-center my-10'>
                 <input type="text"
                     className='border outline-none p-2 w-[25rem] bg-gray-100 text-gray-700 rounded-md'
                     placeholder='Search movie by title'
@@ -114,25 +123,23 @@ const MovieList = () => {
                 />
 
             </div>
-            <div className='grid grid-cols-4 gap-5 my-4'>
+            <div className='grid grid-cols-4 gap-5 my-10'>
                 {/* list of movies */}
                 {movies?.map(item => (
                     <MovieCard key={item.imdbID} data={item} onClick={() => viewMovieInfo(item.imdbID)} />
                 ))}
 
-                {/* button to scroll on top of the page */}
-                <button onClick={() => {
-                    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-                }}>
-                    TOP
-                </button>
-                {movieLoading && (
-                    <p>LOADING...</p>
+                {movieLoading && totalLoadingEffect.map(loader => 
+                    <SkletonLoader />
                 )}
             </div>
             {/* show this modal when click on movie card */}
             {showModal && createPortal(
-                <Modal onClose={closeModal} movieInfo={movieInfo} loading={movieInfoLoading}></Modal>,
+                <Modal
+                ref={ref}
+                onClose={closeModal} 
+                movieInfo={movieInfo} 
+                loading={movieInfoLoading}></Modal>,
                 document.body
             )}
 
