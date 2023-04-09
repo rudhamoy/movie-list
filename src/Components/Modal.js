@@ -1,11 +1,19 @@
 import React from 'react'
 import MovieInfoLoader from './MovieInfoLoader'
+import { useStateContext } from '../context/ContextProvider'
 
-const Modal = ({ onClose, movieInfo, loading, ref }) => {
+const Modal = () => {
+
+  const { setShowModal, setMovieInfo, movieInfo, movieInfoLoading } = useStateContext()
+
+  const closeModal = () => {
+    setShowModal(false)
+    setMovieInfo({})
+}
 
   return (
-    <div ref={ref} onClick={onClose} className='bg-[#00000090] flex justify-center items-center fixed top-0 left-0 right-0 bottom-0 z-40'>
-      {loading ? (
+    <div onClick={closeModal} className='bg-[#00000090] flex justify-center items-center fixed top-0 left-0 right-0 bottom-0 z-40'>
+      {movieInfoLoading ? (
         <MovieInfoLoader />
       ) : (
         <div onClick={e => e.stopPropagation()} className='bg-gray-100 p-2 rounded-md w-[40rem] z-50 flex gap-x-5 relative'>
@@ -21,7 +29,7 @@ const Modal = ({ onClose, movieInfo, loading, ref }) => {
             <p><span className='font-semibold'>Year of Release:</span> {movieInfo.Released}</p>
             <p><span className='font-semibold'>Plot:</span> {movieInfo.Plot}</p>
           </div>
-          <button onClick={onClose} className='absolute bottom-2 right-2 bg-red-400 p-1 px-2 rounded-sm text-xs'>close</button>
+          <button onClick={closeModal} className='absolute bottom-2 right-2 bg-red-400 p-1 px-2 rounded-sm text-xs'>close</button>
         </div>
       )}
 

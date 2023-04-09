@@ -1,10 +1,30 @@
 
-const MovieCard = ({ onClick, data }) => {
+import { useStateContext } from "../context/ContextProvider"
+import axios from 'axios'
+
+const MovieCard = ({ data }) => {
+
+  const movieAPI = 'https://www.omdbapi.com/?apikey=14b23888&'
+
+  const {  setShowModal, setMovieInfo, setMovieInfoLoading } = useStateContext()
+
+  const viewMovieInfo = async (id) => {
+    setShowModal(true)
+    setMovieInfoLoading(true)
+    try {
+        const res = await axios.get(`${movieAPI}&i=${id}`)
+        setMovieInfoLoading(false)
+        setMovieInfo(res.data)
+    } catch (error) {
+        console.log(error)
+        setMovieInfoLoading(false)
+    }
+}
 
   return (
     <div>
       <div
-        onClick={onClick}
+        onClick={() => viewMovieInfo(data.imdbID)}
         className="bg-gray-100 cursor-pointer rounded-md h-[18rem] w-[16rem] text-black overflow-hidden"
       >
         <img src={data.Poster} alt={data.Title} className="object-fill" />
