@@ -83,14 +83,14 @@ const MovieList = () => {
             {/* Search input */}
             <div className='flex justify-center my-10'>
                 <input type="text"
-                    className='border outline-none p-2 w-[25rem] bg-gray-100 text-gray-700 rounded-md'
+                    className='border outline-none p-2 w-[30rem] sm:w-[25rem] bg-gray-100 text-gray-700 rounded-md'
                     placeholder='Search movie by title'
                     value={searchTerm}
                     onChange={onChangeHandler}
                 />
             </div>
             {/* list of movies */}
-            <div className='grid grid-cols-4 gap-5 my-10'>
+            <div className='grid grid-cols-2 sm:grid-cols-4 gap-5 my-10'>
                 {/* list of movies */}
                 {movies?.map(item => (
                     <MovieCard 

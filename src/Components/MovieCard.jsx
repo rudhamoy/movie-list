@@ -25,7 +25,7 @@ const MovieCard = ({ data }) => {
     <div>
       <div
         onClick={() => viewMovieInfo(data.imdbID)}
-        className="bg-gray-100 cursor-pointer rounded-md h-[18rem] w-[16rem] text-black overflow-hidden"
+        className="bg-gray-100 cursor-pointer rounded-md h-[12rem] sm:h-[18rem] w-[10rem] sm:w-[16rem] text-black overflow-hidden"
       >
         <img src={data.Poster} alt={data.Title} className="object-fill" />
       </div>
