@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
+import axios from "axios"
 
 import MovieCard from './MovieCard'
 import Modal from './Modal'
@@ -11,16 +12,16 @@ import useFetchMovies from '../hooks/useFetchMovies'
 
 const MovieList = () => {
     const [movies, setMovies] = useState([])
-    const [searchedMovies, setSearchedMovies] = useState([])
     const [movieLoading, setMovieLoading] = useState(false)
     const [page, setPage] = useState(1)
     const [searchTerm, setSearchTerm] = useState('')
     const [hasMorePage, setHasMorePage] = useState(true)
+    const [error, setError] = useState()
 
     const { showModal, setShowModal } = useStateContext()
 
     // custom hooks - useDebounce hooks for delay request to api when query type
-    let debounceTerms = useDebounce(searchTerm, 500)
+    const debounceTerms = useDebounce(searchTerm, 500)
 
     // custom hooks to close modal when click outside of box or background
     const ref = useOutsideClick(() => setShowModal(false))
@@ -30,18 +31,18 @@ const MovieList = () => {
     // when page number change
     const fetchData = useFetchMovies(
         setMovieLoading, 
-        setSearchedMovies, 
         setHasMorePage, 
         movies,
         setMovies,
-        searchedMovies, 
         page,
-        debounceTerms
+        debounceTerms,
+        setError
         )
-
-    useEffect(() => {
-        fetchData()
-    }, [debounceTerms, page])
+ 
+      
+      useEffect(() => {
+        fetchData();
+      }, [fetchData]);
 
 
     // infinit scroll
@@ -51,7 +52,7 @@ const MovieList = () => {
         const clientHeight = window.innerHeight;
         // increment the page number when scrollTop and innerHeigt > scrollHeight
         // and increment Page number when hasMorePage === true
-        if (scrollTop + clientHeight + 1 >= scrollHeight && hasMorePage) {
+        if (scrollTop + clientHeight + 1 > scrollHeight && hasMorePage) {
             setPage(prevPage => prevPage + 1);
           }
     }
@@ -65,6 +66,8 @@ const MovieList = () => {
 
     // onChange handler for search input
     const onChangeHandler = (e) => {
+        setMovies([])
+        setError('')
         setSearchTerm(e.target.value)
         // set page to one when search query type
         // else the search results will show at current page number
@@ -89,6 +92,14 @@ const MovieList = () => {
                     onChange={onChangeHandler}
                 />
             </div>
+
+             {/* error message */}
+             {error && (
+                <div>
+                    <p>{error}</p>
+                </div>
+            )}
+
             {/* list of movies */}
             <div className='grid grid-cols-2 sm:grid-cols-4 gap-5 my-10'>
                 {/* list of movies */}

@@ -1,53 +1,40 @@
 import axios from "axios"
+import { useCallback } from "react";
 
 const useFetchMovies = (
     setMovieLoading, 
-    setSearchedMovies, 
     setHasMorePage, 
     movies,
     setMovies,
-    searchedMovies, 
     page,
-    debounceTerms
+    debounceTerms,
+    setError
     ) => {
 
         const movieAPI = 'https://www.omdbapi.com/?apikey=14b23888&'
 
 
-    const fetchData = async () => {
-        setMovieLoading(true)
-        try {
-            // if there is query - execute this query
-            if (debounceTerms) {
-                const res = await axios.get(`${movieAPI}&s=${debounceTerms}&page=${page}`)
-                const { Search, Response } = await res.data
-                setSearchedMovies(Search)
-
-                // if response is false - set morepage to false
-                // so no more page update while scrolling
-                if (Response === 'False') {
-                    setHasMorePage(false)
-                    setMovies([...searchedMovies, ...Search])
-                } else if (Response === 'True') {
-                    setMovies([...searchedMovies, ...Search])
-                }
-            } else {
-                // if no query - execute this as default
-                const res = await axios.get(`${movieAPI}&s=matrix&page=${page}`)
-                const { Search, Response } = await res.data
-
-                if (Response === 'False') {
-                    setHasMorePage(false)
-                    setMovies([...movies, ...Search])
-                } else if (Response === 'True') {
-                    setMovies([...movies, ...Search])
-                }
+        const fetchData = useCallback(async () => {
+            setMovieLoading(true);
+            try {
+              const apiQuery = debounceTerms ? `&s=${debounceTerms}` : '&s=matrix';
+              const res = await axios.get(`${movieAPI}${apiQuery}&page=${page}`);
+              const { data } = res;
+          
+              if (data.Response === 'True') {
+                setMovies([...movies, ...data.Search]);
+                setHasMorePage(true);
+              } else if (data.Response === 'False') {
+                setHasMorePage(false);
+                setError(data?.Error)
+              }
+            } catch (error) {
+              console.log(error);
+              setError(error.Error)
+            } finally {
+              setMovieLoading(false);
             }
-            setMovieLoading(false)
-        } catch (error) {
-            console.log(error)
-        }
-    }
+          }, [debounceTerms, page]);
 
   return fetchData
 }
